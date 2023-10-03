@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Pressable, FlatList } from 'react-native'
 import { Link } from 'solito/link'
 import { createParam } from 'solito'
+import { useState } from 'react'
 
 type Params = {
   industry?: string
@@ -18,7 +19,7 @@ function renderItem ({ element }: { element: string }) {
 
 function ElementGrid (values: string[]) {
   return (
-    <View style={styles.box}>
+    <View style={styles.elementBox}>
       <FlatList
         data={values}
         renderItem={({ item }) => renderItem({ element: item })}
@@ -29,7 +30,30 @@ function ElementGrid (values: string[]) {
   )
 }
 
+function renderFilter ({ filter, onPressFilter }: { filter: string, onPressFilter: () => void }) {
+  return (
+    <Pressable style={styles.filter} onPress={onPressFilter}>
+      <Text style={styles.filterText}>{filter}</Text>
+    </Pressable>
+  )
+}
+
+function FilterGrid (filterList: string[], filterFunction: () => void) {
+  return (
+    <View style={styles.filterBox}>
+      <FlatList
+        data={filterList}
+        renderItem={({ item }) => renderFilter({ filter: item, onPressFilter: filterFunction })}
+        keyExtractor={(item, index) => index.toString()}
+        numColumns={8}
+      />
+    </View>
+  )
+}
+
 export function FiltersScreen() {
+  const values: string[] = Array.from({ length: 40 }, () => options[Math.floor(Math.random() * (options.length - 1))]) as string[];
+  const [valList, setValList] = useState(values)
   const { params, setParams } = useParams()
 
   const options: string[] = [
@@ -38,28 +62,20 @@ export function FiltersScreen() {
     "gaming", "FinTech", "PropTech", "eCommerce",
     "data", "DTC", "enterprise", "social", "GovTech"
   ]
-  let values: string[] = Array.from({ length: 40 }, () => options[Math.floor(Math.random() * (options.length - 1))]) as string[];
 
-  const industry = params.industry
-
-  const onPressIndustry = () => {
+  function filterFunction ({ filter }: { filter: string }) {
     setParams({
-      industry: 'tech',
-    })
+      industry: filter
+    });
+    setValList(valList.filter(ind => ind == filter));
   }
 
   return (
     <View style={styles.container}>
       <Text style={styles.text}>filters</Text>
 
-      {
-        ElementGrid(values)
-      }
-
-      <Pressable onPress={onPressIndustry}>
-        <Text>industry</Text>
-      </Pressable>
-
+      { FilterGrid(options, filterFunction) }
+      { ElementGrid(values) }
     </View>
   )
 }
@@ -83,7 +99,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center'
   },
-  box: {
+  elementBox: {
     padding: 10
   },
   element: {
@@ -99,5 +115,19 @@ const styles = StyleSheet.create({
   elementText: {
     fontWeight: '500',
     fontSize: 16
-  }
+  },
+  filterBox: {
+    padding: 10
+  },
+  filter: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 50,
+    margin: 5,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5
+  },
+  filterText: {}
 })
