@@ -1,0 +1,1 @@
+export { AdminScreen as default } from 'app/features/admin/screen'
