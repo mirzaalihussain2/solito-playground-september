@@ -30,32 +30,32 @@ function ElementGrid (values: string[]) {
   )
 }
 
-function renderFilter ({ filter, onPressFilter }: { filter: string, onPressFilter: () => void }) {
-  return (
-    <Pressable style={styles.filter} onPress={onPressFilter}>
-      <Text style={styles.filterText}>{filter}</Text>
-    </Pressable>
-  )
-}
+// function renderFilter ({ filter, onPressFilter }: { filter: string, onPressFilter: () => void }) {
+//   return (
+//     <Pressable style={styles.filter} onPress={onPressFilter}>
+//       <Text style={styles.filterText}>{filter}</Text>
+//     </Pressable>
+//   )
+// }
 
-function FilterGrid (filterList: string[], filterFunction: () => void) {
-  return (
-    <View style={styles.filterBox}>
-      <FlatList
-        data={filterList}
-        renderItem={({ item }) => renderFilter({ filter: item, onPressFilter: filterFunction })}
-        keyExtractor={(item, index) => index.toString()}
-        numColumns={8}
-      />
-    </View>
-  )
-}
+// function FilterGrid (filterList: string[], filterFunction: () => void) {
+//   return (
+//     <View style={styles.filterBox}>
+//       {
+//         filterList.map((x) => renderFilter)
+//       }
+
+//       <FlatList
+//         data={filterList}
+//         renderItem={({ item }) => renderFilter({ filter: item, onPressFilter: filterFunction })}
+//         keyExtractor={(item, index) => index.toString()}
+//         numColumns={8}
+//       />
+//     </View>
+//   )
+// }
 
 export function FiltersScreen() {
-  const values: string[] = Array.from({ length: 40 }, () => options[Math.floor(Math.random() * (options.length - 1))]) as string[];
-  const [valList, setValList] = useState(values)
-  const { params, setParams } = useParams()
-
   const options: string[] = [
     "DeepTech", "VR", "gig", "web3", "SaaS",
     "crypto", "agritech", "AI", "ML", "IoT",
@@ -63,18 +63,32 @@ export function FiltersScreen() {
     "data", "DTC", "enterprise", "social", "GovTech"
   ]
 
-  function filterFunction ({ filter }: { filter: string }) {
-    setParams({
-      industry: filter
-    });
-    setValList(valList.filter(ind => ind == filter));
-  }
+  const values: string[] = Array.from({ length: 40 }, () => options[Math.floor(Math.random() * (options.length - 1))]) as string[];
+  const [valList, setValList] = useState(values)
+  const { params, setParams } = useParams()
+
+
+  // function filterFunction ({ filter }: { filter: string }) {
+  //   setParams({
+  //     industry: filter
+  //   });
+  //   setValList(valList.filter(ind => ind == filter));
+  // }
 
   return (
     <View style={styles.container}>
       <Text style={styles.text}>filters</Text>
+      {
+        /* <View style={styles.filterBox}>
+          {
+            options.map(x => {
+              console.log(x)
+            })
+          }
+        </View> */
 
-      { FilterGrid(options, filterFunction) }
+        /* { FilterGrid(options, filterFunction) } */
+      }
       { ElementGrid(values) }
     </View>
   )
@@ -117,6 +131,7 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   filterBox: {
+    flexDirection: 'row',
     padding: 10
   },
   filter: {
